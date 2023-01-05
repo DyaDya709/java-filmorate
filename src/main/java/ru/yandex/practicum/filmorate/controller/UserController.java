@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 public class UserController {
     private HashMap<Integer, User> users = new HashMap<>();
     private int id = 0;
+
     @PostMapping()
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
         users.put(++id, user);
@@ -36,9 +37,8 @@ public class UserController {
             log.info("user updated '{}'", user);
             return ResponseEntity.ok(user);
         } else {
-            throw new ValidationException("unknown user id");
+            throw new ValidationException("unknown user id", 404);
         }
-
     }
 
     //в этом случае ValidationException будет обрабатываться в @RestControllerAdvice
@@ -46,10 +46,9 @@ public class UserController {
     @GetMapping()
     public ResponseEntity<List<User>> getAllUsers() throws ValidationException {
         if (users.isEmpty()) {
-            throw new ValidationException("не один пользователь не зарегистрирован в базе");
+            throw new ValidationException("не один пользователь не зарегистрирован в базе", 404);
         }
         log.info("users size '{}'", users.size());
         return ResponseEntity.ok(users.values().stream().collect(Collectors.toList()));
     }
-
 }
