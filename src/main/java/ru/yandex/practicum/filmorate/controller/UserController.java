@@ -7,20 +7,16 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
-public class UserController {
-    private HashMap<Integer, User> users = new HashMap<>();
-    private int id = 0;
-
+public class UserController extends AbstractController<User> {
     @PostMapping()
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
-        users.put(++id, user);
+        elements.put(++id, user);
         user.setId(id);
         if (user.getName() == null) {
             user.setName(user.getLogin());
@@ -31,9 +27,9 @@ public class UserController {
 
     @PutMapping()
     public ResponseEntity<User> update(@Valid @RequestBody User user) throws ValidationException {
-        if (users.containsKey(user.getId())) {
-            users.remove(user.getId());
-            users.put(user.getId(), user);
+        if (elements.containsKey(user.getId())) {
+            elements.remove(user.getId());
+            elements.put(user.getId(), user);
             log.info("user updated '{}'", user);
             return ResponseEntity.ok(user);
         } else {
@@ -44,11 +40,11 @@ public class UserController {
     //в этом случае ValidationException будет обрабатываться в @RestControllerAdvice
     //ApplicationExceptionsHandler
     @GetMapping()
-    public ResponseEntity<List<User>> getAllUsers() throws ValidationException {
-        if (users.isEmpty()) {
+    ResponseEntity<List<User>> getAllElements() throws ValidationException {
+        if (elements.isEmpty()) {
             throw new ValidationException("не один пользователь не зарегистрирован в базе", 404);
         }
-        log.info("users size '{}'", users.size());
-        return ResponseEntity.ok(users.values().stream().collect(Collectors.toList()));
+        log.info("users size '{}'", elements.size());
+        return ResponseEntity.ok(elements.values().stream().collect(Collectors.toList()));
     }
 }
