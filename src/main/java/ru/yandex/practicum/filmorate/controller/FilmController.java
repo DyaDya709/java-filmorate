@@ -15,18 +15,18 @@ import java.util.stream.Collectors;
 @RequestMapping("/films")
 @Slf4j
 public class FilmController extends AbstractController<Film> {
-    private final LocalDate minReleaseDate = LocalDate.of(1895, 12, 28);
-    private final int maxDescriptionSize = 200;
+    private final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    private final int MAX_DESCRIPTION_SIZE = 200;
 
     @PostMapping()
     public ResponseEntity<Film> create(@Valid @RequestBody Film film) throws ValidationException {
-        if (film.getDescription() != null && film.getDescription().length() > maxDescriptionSize) {
+        if (film.getDescription() != null && film.getDescription().length() > MAX_DESCRIPTION_SIZE) {
             throw new ValidationException("max length description is 200 characters", 400);
         }
-        if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(minReleaseDate)) {
+        if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
             throw new ValidationException("release date — no earlier than December 28, 1895", 400);
         }
-        elements.put(++id, film);
+        data.put(++id, film);
         film.setId(id);
         log.info("film created '{}'", film);
         return ResponseEntity.ok(film);
@@ -34,15 +34,15 @@ public class FilmController extends AbstractController<Film> {
 
     @PutMapping()
     public ResponseEntity<Film> update(@Valid @RequestBody Film film) throws ValidationException {
-        if (film.getDescription() != null && film.getDescription().length() > maxDescriptionSize) {
+        if (film.getDescription() != null && film.getDescription().length() > MAX_DESCRIPTION_SIZE) {
             throw new ValidationException("max length description is 200 characters", 400);
         }
-        if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(minReleaseDate)) {
+        if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
             throw new ValidationException("release date — no earlier than December 28, 1895", 400);
         }
-        if (elements.containsKey(film.getId())) {
-            elements.remove(film.getId());
-            elements.put(film.getId(), film);
+        if (data.containsKey(film.getId())) {
+            data.remove(film.getId());
+            data.put(film.getId(), film);
             log.info("film updated '{}'", film);
             return ResponseEntity.ok(film);
         } else {
@@ -54,10 +54,26 @@ public class FilmController extends AbstractController<Film> {
     //ApplicationExceptionsHandler
     @GetMapping()
     ResponseEntity<List<Film>> getAllElements() throws ValidationException {
-        if (elements.isEmpty()) {
+        if (data.isEmpty()) {
             throw new ValidationException("в библиотеке нет фильмов", 404);
         }
-        log.info("films size '{}'", elements.size());
-        return ResponseEntity.ok(elements.values().stream().collect(Collectors.toList()));
+        log.info("films size '{}'", data.size());
+        return ResponseEntity.ok(data.values().stream().collect(Collectors.toList()));
+    }
+
+    @Override
+    public void validate(Film element) throws ValidationException {
+        if (element.getName() == null) {
+            throw new ValidationException("bad name",400);
+        }
+        if (element.getDescription() != null && element.getDescription().length() > MAX_DESCRIPTION_SIZE) {
+            throw new ValidationException("bad description",400);
+        }
+        if (element.getReleaseDate() != null && element.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
+            throw new ValidationException("bad releaseDate",400);
+        }
+        if (element.getDuration() < 0) {
+            throw new ValidationException("bad duration",400);
+        }
     }
 }

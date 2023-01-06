@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 public class UserController extends AbstractController<User> {
     @PostMapping()
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
-        elements.put(++id, user);
+        data.put(++id, user);
         user.setId(id);
         if (user.getName() == null) {
             user.setName(user.getLogin());
@@ -27,9 +28,9 @@ public class UserController extends AbstractController<User> {
 
     @PutMapping()
     public ResponseEntity<User> update(@Valid @RequestBody User user) throws ValidationException {
-        if (elements.containsKey(user.getId())) {
-            elements.remove(user.getId());
-            elements.put(user.getId(), user);
+        if (data.containsKey(user.getId())) {
+            data.remove(user.getId());
+            data.put(user.getId(), user);
             log.info("user updated '{}'", user);
             return ResponseEntity.ok(user);
         } else {
@@ -41,10 +42,23 @@ public class UserController extends AbstractController<User> {
     //ApplicationExceptionsHandler
     @GetMapping()
     ResponseEntity<List<User>> getAllElements() throws ValidationException {
-        if (elements.isEmpty()) {
+        if (data.isEmpty()) {
             throw new ValidationException("не один пользователь не зарегистрирован в базе", 404);
         }
-        log.info("users size '{}'", elements.size());
-        return ResponseEntity.ok(elements.values().stream().collect(Collectors.toList()));
+        log.info("users size '{}'", data.size());
+        return ResponseEntity.ok(data.values().stream().collect(Collectors.toList()));
+    }
+
+    @Override
+    public void validate(User element) throws ValidationException {
+        if (element.getEmail() == null || !element.getEmail().contains("@")) {
+            throw new ValidationException("bad email", 400);
+        }
+        if (element.getLogin() == null || element.getLogin().contains(" ")) {
+            throw new ValidationException("bad login", 400);
+        }
+        if (element.getBirthday() == null || element.getBirthday().isAfter(LocalDate.now())) {
+            throw new ValidationException("bad birthday", 400);
+        }
     }
 }
