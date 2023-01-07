@@ -20,12 +20,7 @@ public class FilmController extends AbstractController<Film> {
 
     @PostMapping()
     public ResponseEntity<Film> create(@Valid @RequestBody Film film) throws ValidationException {
-        if (film.getDescription() != null && film.getDescription().length() > MAX_DESCRIPTION_SIZE) {
-            throw new ValidationException("max length description is 200 characters", 400);
-        }
-        if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
-            throw new ValidationException("release date — no earlier than December 28, 1895", 400);
-        }
+        validate(film);
         data.put(++id, film);
         film.setId(id);
         log.info("film created '{}'", film);
@@ -34,12 +29,7 @@ public class FilmController extends AbstractController<Film> {
 
     @PutMapping()
     public ResponseEntity<Film> update(@Valid @RequestBody Film film) throws ValidationException {
-        if (film.getDescription() != null && film.getDescription().length() > MAX_DESCRIPTION_SIZE) {
-            throw new ValidationException("max length description is 200 characters", 400);
-        }
-        if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
-            throw new ValidationException("release date — no earlier than December 28, 1895", 400);
-        }
+        validate(film);
         if (data.containsKey(film.getId())) {
             data.remove(film.getId());
             data.put(film.getId(), film);
@@ -63,7 +53,7 @@ public class FilmController extends AbstractController<Film> {
 
     @Override
     public void validate(Film element) throws ValidationException {
-        if (element.getName() == null) {
+        if (element.getName() == null || element.getName().isEmpty()) {
             throw new ValidationException("bad name",400);
         }
         if (element.getDescription() != null && element.getDescription().length() > MAX_DESCRIPTION_SIZE) {

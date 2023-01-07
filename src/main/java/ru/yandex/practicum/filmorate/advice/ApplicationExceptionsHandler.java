@@ -41,7 +41,7 @@ public class ApplicationExceptionsHandler {
         return new ResponseEntity<>(errorMap, HttpStatus.resolve(e.getHttpCode()));
     }
 
-    //Вариант без создания ResponseEntity
+    //Вариант без создания ResponseEntity (себе для заметки, что можно и так)
 //    @ResponseStatus(HttpStatus.NOT_FOUND)
 //    @ExceptionHandler(ValidationException.class)
 //    public Map<String, String> handleValidationException(ValidationException e) {

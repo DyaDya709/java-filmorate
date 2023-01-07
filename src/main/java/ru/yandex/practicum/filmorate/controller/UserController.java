@@ -16,7 +16,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserController extends AbstractController<User> {
     @PostMapping()
-    public ResponseEntity<User> create(@Valid @RequestBody User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody User user) throws ValidationException {
+        validate(user);
         data.put(++id, user);
         user.setId(id);
         if (user.getName() == null) {
@@ -28,8 +29,12 @@ public class UserController extends AbstractController<User> {
 
     @PutMapping()
     public ResponseEntity<User> update(@Valid @RequestBody User user) throws ValidationException {
+        validate(user);
         if (data.containsKey(user.getId())) {
             data.remove(user.getId());
+            if (user.getName() == null) {
+                user.setName(user.getLogin());
+            }
             data.put(user.getId(), user);
             log.info("user updated '{}'", user);
             return ResponseEntity.ok(user);
@@ -51,10 +56,10 @@ public class UserController extends AbstractController<User> {
 
     @Override
     public void validate(User element) throws ValidationException {
-        if (element.getEmail() == null || !element.getEmail().contains("@")) {
+        if (element.getEmail() == null || !element.getEmail().contains("@") || element.getEmail().isEmpty()) {
             throw new ValidationException("bad email", 400);
         }
-        if (element.getLogin() == null || element.getLogin().contains(" ")) {
+        if (element.getLogin() == null || element.getLogin().contains(" ") || element.getLogin().isEmpty()) {
             throw new ValidationException("bad login", 400);
         }
         if (element.getBirthday() == null || element.getBirthday().isAfter(LocalDate.now())) {
