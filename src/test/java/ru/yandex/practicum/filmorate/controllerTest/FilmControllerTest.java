@@ -7,15 +7,17 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.CustomValidator;
 
 import java.time.LocalDate;
 
 public class FilmControllerTest {
     FilmController filmController;
-
+    CustomValidator validator;
     @BeforeEach
     void init() {
         filmController = new FilmController();
+        validator = new CustomValidator<Film>();
     }
 
     @Test
@@ -24,12 +26,12 @@ public class FilmControllerTest {
         Film film = new Film(1, "", "desc",
                 LocalDate.of(1982, 01, 01), 100);
         ValidationException ex = Assertions.assertThrows(ValidationException.class,
-                () -> filmController.validate(film));
+                () -> validator.validate(film));
         Assertions.assertEquals("bad name", ex.getMessage());
 
         film.setName(null);
         ex = Assertions.assertThrows(ValidationException.class,
-                () -> filmController.validate(film));
+                () -> validator.validate(film));
         Assertions.assertEquals("bad name", ex.getMessage());
     }
 
@@ -43,7 +45,7 @@ public class FilmControllerTest {
                 LocalDate.of(1982, 01, 01), 100);
         film.setDescription(desc);
         ValidationException ex = Assertions.assertThrows(ValidationException.class,
-                () -> filmController.validate(film));
+                () -> validator.validate(film));
         Assertions.assertEquals("bad description", ex.getMessage());
 
     }
@@ -54,7 +56,7 @@ public class FilmControllerTest {
         Film film = new Film(1, "name", "desc",
                 LocalDate.of(1895, 12, 27), 100);
         ValidationException ex = Assertions.assertThrows(ValidationException.class,
-                () -> filmController.validate(film));
+                () -> validator.validate(film));
         Assertions.assertEquals("bad releaseDate", ex.getMessage());
 
     }
@@ -65,7 +67,7 @@ public class FilmControllerTest {
         Film film = new Film(1, "name", "desc",
                 LocalDate.of(1999, 12, 27), -1);
         ValidationException ex = Assertions.assertThrows(ValidationException.class,
-                () -> filmController.validate(film));
+                () -> validator.validate(film));
         Assertions.assertEquals("bad duration", ex.getMessage());
 
     }

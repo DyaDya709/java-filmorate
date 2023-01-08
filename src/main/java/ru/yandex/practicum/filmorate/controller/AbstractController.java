@@ -15,6 +15,4 @@ public abstract class AbstractController<T> {
     abstract ResponseEntity<T> update(T element) throws ValidationException;
 
     abstract ResponseEntity<List<T>> getAllElements() throws ValidationException;
-
-    abstract void validate(T element) throws ValidationException;
 }

@@ -7,15 +7,17 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.CustomValidator;
 
 import java.time.LocalDate;
 
 public class UserControllerTest {
     UserController userController;
-
+    CustomValidator validator;
     @BeforeEach
     void init() {
         userController = new UserController();
+        validator = new CustomValidator<User>();
     }
 
     @Test
@@ -23,7 +25,7 @@ public class UserControllerTest {
     void createUserBadEmail() {
         User user = new User(0, "qweqweadawd", "login", "name", LocalDate.of(1982, 01, 01));
         final ValidationException ex = Assertions.assertThrows(ValidationException.class,
-                () -> userController.validate(user));
+                () -> validator.validate(user));
         Assertions.assertEquals("bad email", ex.getMessage());
     }
 
@@ -32,12 +34,12 @@ public class UserControllerTest {
     void createUserEmptyEmail() {
         User user = new User(0, null, "login", "name", LocalDate.of(1982, 01, 01));
         ValidationException ex = Assertions.assertThrows(ValidationException.class,
-                () -> userController.validate(user));
+                () -> validator.validate(user));
         Assertions.assertEquals("bad email", ex.getMessage());
 
         user.setEmail(null);
         ex = Assertions.assertThrows(ValidationException.class,
-                () -> userController.validate(user));
+                () -> validator.validate(user));
         Assertions.assertEquals("bad email", ex.getMessage());
     }
 
@@ -46,7 +48,7 @@ public class UserControllerTest {
     void createUserBadLogin() {
         User user = new User(0, "qweqw@eadawd", "login login", "name", LocalDate.of(1982, 01, 01));
         final ValidationException ex = Assertions.assertThrows(ValidationException.class,
-                () -> userController.validate(user));
+                () -> validator.validate(user));
         Assertions.assertEquals("bad login", ex.getMessage());
     }
 
@@ -55,12 +57,12 @@ public class UserControllerTest {
     void createUserEmptyLogin() {
         User user = new User(0, "qweqw@eadawd", "", "name", LocalDate.of(1982, 01, 01));
         ValidationException ex = Assertions.assertThrows(ValidationException.class,
-                () -> userController.validate(user));
+                () -> validator.validate(user));
         Assertions.assertEquals("bad login", ex.getMessage());
 
         user.setLogin(null);
         ex = Assertions.assertThrows(ValidationException.class,
-                () -> userController.validate(user));
+                () -> validator.validate(user));
         Assertions.assertEquals("bad login", ex.getMessage());
     }
 
@@ -69,7 +71,7 @@ public class UserControllerTest {
     void createUserBadBirthday() {
         User user = new User(0, "qweqw@eadawd", "login", "name", LocalDate.of(2024, 01, 01));
         final ValidationException ex = Assertions.assertThrows(ValidationException.class,
-                () -> userController.validate(user));
+                () -> validator.validate(user));
         Assertions.assertEquals("bad birthday", ex.getMessage());
     }
 

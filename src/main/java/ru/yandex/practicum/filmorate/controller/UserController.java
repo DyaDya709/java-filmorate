@@ -5,9 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.CustomValidator;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,9 +15,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/users")
 @Slf4j
 public class UserController extends AbstractController<User> {
+    CustomValidator validator = new CustomValidator<User>();
+
     @PostMapping()
     public ResponseEntity<User> create(@Valid @RequestBody User user) throws ValidationException {
-        validate(user);
+        validator.validate(user);
         data.put(++id, user);
         user.setId(id);
         if (user.getName() == null) {
@@ -29,7 +31,7 @@ public class UserController extends AbstractController<User> {
 
     @PutMapping()
     public ResponseEntity<User> update(@Valid @RequestBody User user) throws ValidationException {
-        validate(user);
+        validator.validate(user);
         if (data.containsKey(user.getId())) {
             data.remove(user.getId());
             if (user.getName() == null) {
@@ -54,16 +56,4 @@ public class UserController extends AbstractController<User> {
         return ResponseEntity.ok(data.values().stream().collect(Collectors.toList()));
     }
 
-    @Override
-    public void validate(User element) throws ValidationException {
-        if (element.getEmail() == null || !element.getEmail().contains("@") || element.getEmail().isEmpty()) {
-            throw new ValidationException("bad email", 400);
-        }
-        if (element.getLogin() == null || element.getLogin().contains(" ") || element.getLogin().isEmpty()) {
-            throw new ValidationException("bad login", 400);
-        }
-        if (element.getBirthday() == null || element.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("bad birthday", 400);
-        }
-    }
 }
