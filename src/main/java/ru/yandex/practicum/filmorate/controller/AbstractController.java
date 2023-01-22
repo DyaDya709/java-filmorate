@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.http.ResponseEntity;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.util.HashMap;
@@ -12,7 +13,7 @@ public abstract class AbstractController<T> {
 
     abstract ResponseEntity<T> create(T element) throws ValidationException;
 
-    abstract ResponseEntity<T> update(T element) throws ValidationException;
+    abstract ResponseEntity<T> update(T element) throws ValidationException, NotFoundException;
 
     abstract ResponseEntity<List<T>> getAllElements() throws ValidationException;
 }
