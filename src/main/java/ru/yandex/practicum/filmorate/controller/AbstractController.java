@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.http.ResponseEntity;
+import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 
@@ -17,5 +18,5 @@ public abstract class AbstractController<T> {
 
     abstract ResponseEntity<List<T>> getAllElements() throws ValidationException;
 
-    abstract ResponseEntity<T> get(Integer id) throws NotFoundException;
+    abstract ResponseEntity<T> get(Integer id) throws NotFoundException, BadRequestException;
 }

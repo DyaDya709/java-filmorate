@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Data
 @AllArgsConstructor
@@ -21,5 +22,5 @@ public class User {
     private String name;
     @PastOrPresent
     private LocalDate birthday;
-    private Set<Integer> friends;
+    private Set<Integer> friends = new TreeSet<>();
 }

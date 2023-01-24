@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -44,21 +45,21 @@ public class UserController extends AbstractController<User> {
     }
 
     @GetMapping("/{userId}")
-    ResponseEntity<User> get(@PathVariable(required = false, value = "userId") Integer id) throws NotFoundException {
+    ResponseEntity<User> get(@PathVariable(required = false, value = "userId") Integer id) throws BadRequestException, NotFoundException {
         if (id != null) {
             return ResponseEntity.ok(userService.get(id));
         } else {
-            throw new NotFoundException("user id missing");
+            throw new BadRequestException("user id missing");
         }
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    ResponseEntity<Boolean> addFiend(@PathVariable Integer id, @PathVariable Integer friendId) {
+    ResponseEntity<Boolean> addFiend(@PathVariable Integer id, @PathVariable Integer friendId) throws NotFoundException {
         return ResponseEntity.ok(userService.addFriend(id, friendId));
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    ResponseEntity<Boolean> removeFiend(@PathVariable Integer id, @PathVariable Integer friendId) {
+    ResponseEntity<Boolean> removeFiend(@PathVariable Integer id, @PathVariable Integer friendId) throws NotFoundException {
         return ResponseEntity.ok(userService.removeFriend(id, friendId));
     }
 

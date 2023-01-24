@@ -7,7 +7,7 @@ import java.util.List;
 public interface Serviceable<T> {
     void create(T element);
     void add(T element);
-    T get(Integer id);
+    T get(Integer id) throws NotFoundException;
     List<T> get();
     void upDate(T element) throws NotFoundException;
     void remove(Integer id);
