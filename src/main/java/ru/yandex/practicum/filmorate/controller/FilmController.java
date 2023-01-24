@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/films")
@@ -44,5 +43,24 @@ public class FilmController extends AbstractController<Film> {
     @GetMapping()
     ResponseEntity<List<Film>> getAllElements() throws ValidationException {
         return ResponseEntity.ok(filmService.get());
+    }
+
+    @GetMapping("{/filmId}")
+    ResponseEntity<Film> get(@PathVariable(required = false, value = "filmId") Integer id) throws NotFoundException {
+        if (id != null) {
+            return ResponseEntity.ok(filmService.get(id));
+        } else {
+            throw new NotFoundException("film id missing");
+        }
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    ResponseEntity<Boolean> addlike(@PathVariable(value = "id") Integer filmId
+            , @PathVariable Integer userId) throws NotFoundException {
+        if (filmId != null && userId != null) {
+            return ResponseEntity.ok(filmService.addLike(filmId, userId));
+        } else {
+            throw new NotFoundException("film id missing");
+        }
     }
 }

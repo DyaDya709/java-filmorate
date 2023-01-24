@@ -16,4 +16,6 @@ public abstract class AbstractController<T> {
     abstract ResponseEntity<T> update(T element) throws ValidationException, NotFoundException;
 
     abstract ResponseEntity<List<T>> getAllElements() throws ValidationException;
+
+    abstract ResponseEntity<T> get(Integer id) throws NotFoundException;
 }

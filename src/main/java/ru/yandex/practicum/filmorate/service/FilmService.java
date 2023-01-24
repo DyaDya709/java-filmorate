@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Comparator;
 import java.util.List;
@@ -15,14 +15,16 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class FilmService implements Serviceable<Film> {
-    private final FilmStorage storage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
     private int id = 0;
 
     private final int MAX_COUNT = 0;
 
     @Autowired
-    public FilmService(FilmStorage storage) {
-        this.storage = storage;
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
     private void generateId(final Film film) {
@@ -32,24 +34,24 @@ public class FilmService implements Serviceable<Film> {
     @Override
     public void create(Film film) {
         generateId(film);
-        storage.put(film.getId(), film);
+        filmStorage.put(film.getId(), film);
         log.info("film created '{}'", film);
     }
 
     @Override
     public void add(Film film) {
-        storage.put(film.getId(), film);
+        filmStorage.put(film.getId(), film);
     }
 
     @Override
     public Film get(Integer id) {
-        return storage.get(id);
+        return filmStorage.get(id);
     }
 
     @Override
     public List<Film> get() {
-        log.info("films size '{}'", storage.size());
-        return storage.get();
+        log.info("films size '{}'", filmStorage.size());
+        return filmStorage.get();
     }
 
     @Override
@@ -61,28 +63,28 @@ public class FilmService implements Serviceable<Film> {
         }
         remove(oldFilm.getId());
         add(film);
-        log.info("film updated '{}'",film);
+        log.info("film updated '{}'", film);
     }
 
     @Override
     public void remove(Integer id) {
-        storage.remove(id);
+        filmStorage.remove(id);
     }
 
-    public void addLike(Film film, User user) {
-        film.getLikesFromUserId().add(user.getId());
+    public boolean addLike(Integer filmId, Integer userId) {
+        if (userStorage.get(userId) != null) {
+            get(filmId).getLikesFromUserId().add(userId);
+            return true;
+        }
+        return false;
     }
 
-    public void addLike(Film film, Integer userId) {
-        film.getLikesFromUserId().add(userId);
-    }
-
-    public List<Film> getPopularFilms() {
-        return storage.get()
+    public List<Film> getPopularFilms(Integer count) {
+        return filmStorage.get()
                 .stream()
                 .filter(f -> f.getLikesFromUserId() != null && f.getLikesFromUserId().size() > 0)
                 .sorted(Comparator.comparingInt(f -> f.getLikesFromUserId().size()))
-                .limit(MAX_COUNT)
+                .limit(count == null ? MAX_COUNT : count)
                 .collect(Collectors.toList());
     }
 }

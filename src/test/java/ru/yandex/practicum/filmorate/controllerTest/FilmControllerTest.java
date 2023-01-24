@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.CustomValidator;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 
@@ -18,12 +19,14 @@ public class FilmControllerTest {
     CustomValidator validator;
     FilmService filmService;
     InMemoryFilmStorage storage;
+    InMemoryUserStorage userStorage;
 
     @BeforeEach
     void init() {
         storage = new InMemoryFilmStorage();
+        userStorage = new InMemoryUserStorage();
         validator = new CustomValidator<Film>();
-        filmService = new FilmService(storage);
+        filmService = new FilmService(storage, userStorage);
         filmController = new FilmController(validator, filmService);
     }
 

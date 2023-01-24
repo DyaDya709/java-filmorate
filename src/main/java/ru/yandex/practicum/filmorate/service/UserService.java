@@ -7,7 +7,9 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -70,16 +72,38 @@ public class UserService implements Serviceable<User> {
         storage.remove(id);
     }
 
-    public void addFriend(User user, User friend) {
-        user.getFriends().add(friend.getId());
+    public boolean addFriend(Integer userId, Integer friendId) {
+        User user = get(userId);
+        user.getFriends().add(friendId);
+        User friend = get(friendId);
         friend.getFriends().add(user.getId());
+        return true;
     }
 
-    public void addFriend(User user, Integer friendId) {
-        user.getFriends().add(friendId);
-        User friend = storage.get(friendId);
-        if (friend != null) {
-            friend.getFriends().add(user.getId());
+    public boolean deleteFriend(Integer userId, Integer friendId) {
+        User user = get(userId);
+        User friend = get(friendId);
+        user.getFriends().remove(friend);
+        friend.getFriends().remove(user);
+        return true;
+    }
+
+    public List<User> getFriends(Integer userId) {
+        List<Integer> friendsId = get(userId).getFriends().stream().collect(Collectors.toList());
+        List<User> friends = new ArrayList<>();
+        for (int id : friendsId) {
+            friends.add(get(id));
         }
+        return friends;
+    }
+
+    public List<User> getCommonFriends(Integer userId, Integer otherId) {
+        List<User> commonFriends = get(otherId)
+                .getFriends()
+                .stream()
+                .filter(i -> get(userId).getFriends().contains(i))
+                .map(i -> get(i))
+                .collect(Collectors.toList());
+        return commonFriends;
     }
 }
