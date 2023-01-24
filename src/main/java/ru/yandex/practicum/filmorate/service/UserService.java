@@ -43,10 +43,11 @@ public class UserService implements Serviceable<User> {
 
     @Override
     public User get(Integer id) throws NotFoundException {
-        if (storage.get(id) == null) {
+        User user = storage.get(id);
+        if (user == null) {
             throw new NotFoundException("user not found id="+id);
         }
-        return storage.get(id);
+        return user;
     }
 
     @Override

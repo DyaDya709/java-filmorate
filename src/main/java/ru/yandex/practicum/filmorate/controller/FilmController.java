@@ -41,7 +41,7 @@ public class FilmController extends AbstractController<Film> {
     }
 
     @GetMapping()
-    ResponseEntity<List<Film>> getAllElements() throws ValidationException {
+    ResponseEntity<List<Film>> getAllElements() {
         return ResponseEntity.ok(filmService.get());
     }
 
@@ -70,11 +70,11 @@ public class FilmController extends AbstractController<Film> {
         if (filmId != null && userId != null) {
             return ResponseEntity.ok(filmService.removeLike(filmId, userId));
         } else {
-            throw new NotFoundException("film id missing");
+            throw new NotFoundException("film id or user id missing");
         }
     }
 
-    @GetMapping("/popular?count={count}")
+    @GetMapping({"/popular","/popular?count={count}"})
     ResponseEntity<List<Film>> getPopularFilms(@RequestParam(required = false) Integer count) {
         return ResponseEntity.ok(filmService.getPopularFilms(count));
     }

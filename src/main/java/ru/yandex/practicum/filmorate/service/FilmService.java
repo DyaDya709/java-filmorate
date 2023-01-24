@@ -18,8 +18,7 @@ public class FilmService implements Serviceable<Film> {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
     private int id = 0;
-
-    private final int MAX_COUNT = 0;
+    private final int DEFAULT_COUNT = 10;
 
     @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
@@ -44,8 +43,12 @@ public class FilmService implements Serviceable<Film> {
     }
 
     @Override
-    public Film get(Integer id) {
-        return filmStorage.get(id);
+    public Film get(Integer id) throws NotFoundException {
+        Film film = filmStorage.get(id);
+        if (film == null) {
+            throw new NotFoundException("film not found id=" + id);
+        }
+        return film;
     }
 
     @Override
@@ -71,28 +74,44 @@ public class FilmService implements Serviceable<Film> {
         filmStorage.remove(id);
     }
 
-    public boolean addLike(Integer filmId, Integer userId) {
+    public boolean addLike(Integer filmId, Integer userId) throws NotFoundException {
         if (userStorage.get(userId) != null) {
-            get(filmId).getLikesFromUserId().add(userId);
+            Integer likes = get(filmId).getLikesFromUserId().getOrDefault(userId, 0);
+            get(filmId).getLikesFromUserId().put(userId
+                    , likes + 1);
             return true;
         }
         return false;
     }
 
-    public boolean removeLike(Integer filmId, Integer userId) {
+    public boolean removeLike(Integer filmId, Integer userId) throws NotFoundException {
         if (userStorage.get(userId) != null) {
             get(filmId).getLikesFromUserId().remove(userId);
             return true;
+        } else {
+            throw new NotFoundException("user not found id=" + userId);
         }
-        return false;
+
     }
 
     public List<Film> getPopularFilms(Integer count) {
-        return filmStorage.get()
+        Comparator<Film> rateComparator = Comparator
+                .comparing(f -> filmLikes(f.getId()) + f.getRate(), Comparator.reverseOrder());
+        Comparator<Film> dateComparator = Comparator
+                .comparing((f) -> f.getReleaseDate(), Comparator.nullsLast(Comparator.reverseOrder()));
+
+        List<Film> films = filmStorage.get()
                 .stream()
-                .filter(f -> f.getLikesFromUserId() != null && f.getLikesFromUserId().size() > 0)
-                .sorted(Comparator.comparingInt(f -> f.getLikesFromUserId().size()))
-                .limit(count == null ? MAX_COUNT : count)
+                .filter(f -> f.getLikesFromUserId().size() > 0 || f.getRate() > 0)
+                .sorted(dateComparator.thenComparing(rateComparator))
+                .limit(count == null ? DEFAULT_COUNT : count)
                 .collect(Collectors.toList());
+        return films;
+    }
+
+    private Integer filmLikes(Integer filmId) {
+        return filmStorage.get(filmId).getLikesFromUserId().values()
+                .stream()
+                .mapToInt(l -> l).sum();
     }
 }

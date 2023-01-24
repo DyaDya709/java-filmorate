@@ -8,6 +8,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -23,5 +25,6 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private long duration;
-    private Set<Integer> likesFromUserId = new TreeSet<>();
+    private Integer rate;
+    private HashMap<Integer,Integer> likesFromUserId = new HashMap<>();
 }
