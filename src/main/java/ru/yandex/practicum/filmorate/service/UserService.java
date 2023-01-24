@@ -80,7 +80,7 @@ public class UserService implements Serviceable<User> {
         return true;
     }
 
-    public boolean deleteFriend(Integer userId, Integer friendId) {
+    public boolean removeFriend(Integer userId, Integer friendId) {
         User user = get(userId);
         User friend = get(friendId);
         user.getFriends().remove(friend);

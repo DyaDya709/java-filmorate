@@ -43,7 +43,7 @@ public class UserController extends AbstractController<User> {
         return ResponseEntity.ok(userService.get());
     }
 
-    @GetMapping("{/userId}")
+    @GetMapping("/{userId}")
     ResponseEntity<User> get(@PathVariable(required = false, value = "userId") Integer id) throws NotFoundException {
         if (id != null) {
             return ResponseEntity.ok(userService.get(id));
@@ -58,8 +58,8 @@ public class UserController extends AbstractController<User> {
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    ResponseEntity<Boolean> deleteFiend(@PathVariable Integer id, @PathVariable Integer friendId) {
-        return ResponseEntity.ok(userService.deleteFriend(id, friendId));
+    ResponseEntity<Boolean> removeFiend(@PathVariable Integer id, @PathVariable Integer friendId) {
+        return ResponseEntity.ok(userService.removeFriend(id, friendId));
     }
 
     @GetMapping("/{id}/friends")

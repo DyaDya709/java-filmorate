@@ -45,7 +45,7 @@ public class FilmController extends AbstractController<Film> {
         return ResponseEntity.ok(filmService.get());
     }
 
-    @GetMapping("{/filmId}")
+    @GetMapping("/{filmId}")
     ResponseEntity<Film> get(@PathVariable(required = false, value = "filmId") Integer id) throws NotFoundException {
         if (id != null) {
             return ResponseEntity.ok(filmService.get(id));
@@ -62,5 +62,20 @@ public class FilmController extends AbstractController<Film> {
         } else {
             throw new NotFoundException("film id missing");
         }
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    ResponseEntity<Boolean> deletelike(@PathVariable(value = "id") Integer filmId
+            , @PathVariable Integer userId) throws NotFoundException {
+        if (filmId != null && userId != null) {
+            return ResponseEntity.ok(filmService.removeLike(filmId, userId));
+        } else {
+            throw new NotFoundException("film id missing");
+        }
+    }
+
+    @GetMapping("/popular?count={count}")
+    ResponseEntity<List<Film>> getPopularFilms(@RequestParam(required = false) Integer count) {
+        return ResponseEntity.ok(filmService.getPopularFilms(count));
     }
 }

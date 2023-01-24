@@ -79,6 +79,14 @@ public class FilmService implements Serviceable<Film> {
         return false;
     }
 
+    public boolean removeLike(Integer filmId, Integer userId) {
+        if (userStorage.get(userId) != null) {
+            get(filmId).getLikesFromUserId().remove(userId);
+            return true;
+        }
+        return false;
+    }
+
     public List<Film> getPopularFilms(Integer count) {
         return filmStorage.get()
                 .stream()
