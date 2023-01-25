@@ -34,7 +34,7 @@ public class FilmControllerTest {
     @DisplayName("Создать фильм с пустым названием")
     void createFilmEmptyName() {
         Film film = new Film(1, "", "desc",
-                LocalDate.of(1982, 01, 01), 100, null);
+                LocalDate.of(1982, 01, 01), 100,0);
         ValidationException ex = Assertions.assertThrows(ValidationException.class,
                 () -> validator.validate(film));
         Assertions.assertEquals("bad name", ex.getMessage());
@@ -52,7 +52,7 @@ public class FilmControllerTest {
                 "qweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqweqwe" +
                 "qweqweqweqweqweqweqwqw";
         Film film = new Film(1, "name", "",
-                LocalDate.of(1982, 01, 01), 100, null);
+                LocalDate.of(1982, 01, 01), 100, 0);
         film.setDescription(desc);
         ValidationException ex = Assertions.assertThrows(ValidationException.class,
                 () -> validator.validate(film));
@@ -64,7 +64,7 @@ public class FilmControllerTest {
     @DisplayName("Создать фильм с датой релиза, раньше даты д.р. кино")
     void createFilmBadReleaseDate() {
         Film film = new Film(1, "name", "desc",
-                LocalDate.of(1895, 12, 27), 100, null);
+                LocalDate.of(1895, 12, 27), 100, 0);
         ValidationException ex = Assertions.assertThrows(ValidationException.class,
                 () -> validator.validate(film));
         Assertions.assertEquals("bad releaseDate", ex.getMessage());
@@ -75,7 +75,7 @@ public class FilmControllerTest {
     @DisplayName("Создать фильм с продолжительностью меньше нуля")
     void createFilmNegativeDuration() {
         Film film = new Film(1, "name", "desc",
-                LocalDate.of(1999, 12, 27), -1, null);
+                LocalDate.of(1999, 12, 27), -1, 0);
         ValidationException ex = Assertions.assertThrows(ValidationException.class,
                 () -> validator.validate(film));
         Assertions.assertEquals("bad duration", ex.getMessage());

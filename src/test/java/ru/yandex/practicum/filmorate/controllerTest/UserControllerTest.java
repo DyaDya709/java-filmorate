@@ -31,7 +31,7 @@ public class UserControllerTest {
     @DisplayName("создать пользователя с кривой почтой")
     void createUserBadEmail() {
         User user = new User(0, "qweqweadawd", "login", "name"
-                , LocalDate.of(1982, 01, 01),null);
+                , LocalDate.of(1982, 01, 01));
         final ValidationException ex = Assertions.assertThrows(ValidationException.class,
                 () -> validator.validate(user));
         Assertions.assertEquals("bad email", ex.getMessage());
@@ -41,7 +41,7 @@ public class UserControllerTest {
     @DisplayName("создать пользователя с пустой почтой")
     void createUserEmptyEmail() {
         User user = new User(0, null, "login", "name"
-                , LocalDate.of(1982, 01, 01),null);
+                , LocalDate.of(1982, 01, 01));
         ValidationException ex = Assertions.assertThrows(ValidationException.class,
                 () -> validator.validate(user));
         Assertions.assertEquals("bad email", ex.getMessage());
@@ -56,7 +56,7 @@ public class UserControllerTest {
     @DisplayName("создать пользователя с кривым логином")
     void createUserBadLogin() {
         User user = new User(0, "qweqw@eadawd", "login login", "name"
-                , LocalDate.of(1982, 01, 01),null);
+                , LocalDate.of(1982, 01, 01));
         final ValidationException ex = Assertions.assertThrows(ValidationException.class,
                 () -> validator.validate(user));
         Assertions.assertEquals("bad login", ex.getMessage());
@@ -66,7 +66,7 @@ public class UserControllerTest {
     @DisplayName("создать пользователя с пустым логином")
     void createUserEmptyLogin() {
         User user = new User(0, "qweqw@eadawd", "", "name"
-                , LocalDate.of(1982, 01, 01),null);
+                , LocalDate.of(1982, 01, 01));
         ValidationException ex = Assertions.assertThrows(ValidationException.class,
                 () -> validator.validate(user));
         Assertions.assertEquals("bad login", ex.getMessage());
@@ -81,7 +81,7 @@ public class UserControllerTest {
     @DisplayName("создать пользователя с датой рождения позже текущего времени")
     void createUserBadBirthday() {
         User user = new User(0, "qweqw@eadawd", "login", "name"
-                , LocalDate.of(2024, 01, 01),null);
+                , LocalDate.of(2024, 01, 01));
         final ValidationException ex = Assertions.assertThrows(ValidationException.class,
                 () -> validator.validate(user));
         Assertions.assertEquals("bad birthday", ex.getMessage());
