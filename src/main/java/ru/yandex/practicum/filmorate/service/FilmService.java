@@ -43,7 +43,7 @@ public class FilmService implements Serviceable<Film> {
     }
 
     @Override
-    public Film get(Integer id) throws NotFoundException {
+    public Film get(Integer id) {
         Film film = filmStorage.get(id);
         if (film == null) {
             throw new NotFoundException("film not found id=" + id);
@@ -84,7 +84,7 @@ public class FilmService implements Serviceable<Film> {
         return false;
     }
 
-    public boolean removeLike(Integer filmId, Integer userId) throws NotFoundException {
+    public boolean removeLike(Integer filmId, Integer userId) {
         if (userStorage.get(userId) != null) {
             get(filmId).getLikesFromUserId().remove(userId);
             return true;

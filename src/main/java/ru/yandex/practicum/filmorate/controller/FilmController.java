@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.CustomValidator;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -17,8 +16,8 @@ import java.util.List;
 @RequestMapping("/films")
 @Slf4j
 public class FilmController extends AbstractController<Film> {
-    CustomValidator<Film> validator;
-    FilmService filmService;
+    private CustomValidator<Film> validator;
+    private FilmService filmService;
 
     @Autowired
     public FilmController(CustomValidator<Film> validator, FilmService filmService) {
@@ -27,14 +26,14 @@ public class FilmController extends AbstractController<Film> {
     }
 
     @PostMapping()
-    public ResponseEntity<Film> create(@Valid @RequestBody Film film) throws ValidationException {
+    public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
         validator.validate(film);
         filmService.create(film);
         return ResponseEntity.ok(film);
     }
 
     @PutMapping()
-    public ResponseEntity<Film> update(@Valid @RequestBody Film film) throws ValidationException, NotFoundException {
+    public ResponseEntity<Film> update(@Valid @RequestBody Film film) {
         validator.validate(film);
         filmService.upDate(film);
         return ResponseEntity.ok(film);
@@ -46,7 +45,7 @@ public class FilmController extends AbstractController<Film> {
     }
 
     @GetMapping("/{filmId}")
-    ResponseEntity<Film> get(@PathVariable(required = false, value = "filmId") Integer id) throws NotFoundException {
+    ResponseEntity<Film> get(@PathVariable(required = false, value = "filmId") Integer id) {
         if (id != null) {
             return ResponseEntity.ok(filmService.get(id));
         } else {
@@ -56,7 +55,7 @@ public class FilmController extends AbstractController<Film> {
 
     @PutMapping("/{id}/like/{userId}")
     ResponseEntity<Boolean> addlike(@PathVariable(value = "id") Integer filmId
-            , @PathVariable Integer userId) throws NotFoundException {
+            , @PathVariable Integer userId) {
         if (filmId != null && userId != null) {
             return ResponseEntity.ok(filmService.addLike(filmId, userId));
         } else {
@@ -66,7 +65,7 @@ public class FilmController extends AbstractController<Film> {
 
     @DeleteMapping("/{id}/like/{userId}")
     ResponseEntity<Boolean> deletelike(@PathVariable(value = "id") Integer filmId
-            , @PathVariable Integer userId) throws NotFoundException {
+            , @PathVariable Integer userId) {
         if (filmId != null && userId != null) {
             return ResponseEntity.ok(filmService.removeLike(filmId, userId));
         } else {
@@ -74,7 +73,7 @@ public class FilmController extends AbstractController<Film> {
         }
     }
 
-    @GetMapping({"/popular","/popular?count={count}"})
+    @GetMapping({"/popular", "/popular?count={count}"})
     ResponseEntity<List<Film>> getPopularFilms(@RequestParam(required = false) Integer count) {
         return ResponseEntity.ok(filmService.getPopularFilms(count));
     }

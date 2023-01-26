@@ -12,7 +12,7 @@ public class CustomValidator<T> {
     private final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
     private final int MAX_DESCRIPTION_SIZE = 200;
 
-    public void validate(T element) throws ValidationException {
+    public void validate(T element) {
         if (element instanceof User) {
             User user = (User) element;
             if (user.getEmail() == null || !user.getEmail().contains("@") || user.getEmail().isEmpty()) {

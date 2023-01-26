@@ -21,7 +21,7 @@ public class Film {
     @Positive
     private long duration;
     private Integer rate;
-    private HashMap<Integer,Integer> likesFromUserId = new HashMap<>();
+    private HashMap<Integer, Integer> likesFromUserId = new HashMap<>();
 
     public Film(int id, String name, String description, LocalDate releaseDate, long duration, Integer rate) {
         this.id = id;

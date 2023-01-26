@@ -42,10 +42,10 @@ public class UserService implements Serviceable<User> {
     }
 
     @Override
-    public User get(Integer id) throws NotFoundException {
+    public User get(Integer id) {
         User user = storage.get(id);
         if (user == null) {
-            throw new NotFoundException("user not found id="+id);
+            throw new NotFoundException("user not found id=" + id);
         }
         return user;
     }
@@ -87,8 +87,8 @@ public class UserService implements Serviceable<User> {
     public boolean removeFriend(Integer userId, Integer friendId) throws NotFoundException {
         User user = get(userId);
         User friend = get(friendId);
-        user.getFriends().removeIf(id->id.equals(friendId));
-        friend.getFriends().removeIf(id->id.equals(userId));
+        user.getFriends().removeIf(id -> id.equals(friendId));
+        friend.getFriends().removeIf(id -> id.equals(userId));
         return true;
     }
 

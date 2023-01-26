@@ -8,36 +8,36 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class InMemoryFilmStorage implements FilmStorage{
-    private final HashMap<Integer, Film> DATA = new HashMap<>();
+public class InMemoryFilmStorage implements FilmStorage {
+    private final HashMap<Integer, Film> data = new HashMap<>();
 
     @Override
     public void put(Integer id, Film film) {
-        DATA.put(id, film);
+        data.put(id, film);
     }
 
     @Override
     public Film get(Integer id) {
-        return DATA.get(id);
+        return data.get(id);
     }
 
     @Override
     public List<Film> get() {
-        return DATA.values().stream().collect(Collectors.toList());
+        return data.values().stream().collect(Collectors.toList());
     }
 
     @Override
     public void remove(Integer id) {
-        DATA.remove(id);
+        data.remove(id);
     }
 
     @Override
     public void remove(Film film) {
-        DATA.remove(film.getId());
+        data.remove(film.getId());
     }
 
     @Override
     public int size() {
-        return DATA.size();
+        return data.size();
     }
 }
