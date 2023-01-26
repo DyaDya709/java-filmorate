@@ -1,52 +1,80 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.CustomValidator;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
 public class FilmController extends AbstractController<Film> {
-    CustomValidator validator = new CustomValidator<Film>();
+    private CustomValidator<Film> validator;
+    private FilmService filmService;
+
+    @Autowired
+    public FilmController(CustomValidator<Film> validator, FilmService filmService) {
+        this.validator = validator;
+        this.filmService = filmService;
+    }
 
     @PostMapping()
-    public ResponseEntity<Film> create(@Valid @RequestBody Film film) throws ValidationException {
+    public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
         validator.validate(film);
-        data.put(++id, film);
-        film.setId(id);
-        log.info("film created '{}'", film);
+        filmService.create(film);
         return ResponseEntity.ok(film);
     }
 
     @PutMapping()
-    public ResponseEntity<Film> update(@Valid @RequestBody Film film) throws ValidationException {
+    public ResponseEntity<Film> update(@Valid @RequestBody Film film) {
         validator.validate(film);
-        if (data.containsKey(film.getId())) {
-            data.remove(film.getId());
-            data.put(film.getId(), film);
-            log.info("film updated '{}'", film);
-            return ResponseEntity.ok(film);
+        filmService.upDate(film);
+        return ResponseEntity.ok(film);
+    }
+
+    @GetMapping()
+    ResponseEntity<List<Film>> getAllElements() {
+        return ResponseEntity.ok(filmService.get());
+    }
+
+    @GetMapping("/{filmId}")
+    ResponseEntity<Film> get(@PathVariable(required = false, value = "filmId") Integer id) {
+        if (id != null) {
+            return ResponseEntity.ok(filmService.get(id));
         } else {
-            throw new ValidationException("unknown film id", 404);
+            throw new NotFoundException("film id missing");
         }
     }
 
-    //в этом случае ValidationException будет обрабатываться в @RestControllerAdvice
-    //ApplicationExceptionsHandler
-    @GetMapping()
-    ResponseEntity<List<Film>> getAllElements() throws ValidationException {
-        if (data.isEmpty()) {
-            throw new ValidationException("в библиотеке нет фильмов", 404);
+    @PutMapping("/{id}/like/{userId}")
+    ResponseEntity<Boolean> addlike(@PathVariable(value = "id") Integer filmId
+            , @PathVariable Integer userId) {
+        if (filmId != null && userId != null) {
+            return ResponseEntity.ok(filmService.addLike(filmId, userId));
+        } else {
+            throw new NotFoundException("film id missing");
         }
-        log.info("films size '{}'", data.size());
-        return ResponseEntity.ok(data.values().stream().collect(Collectors.toList()));
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    ResponseEntity<Boolean> deletelike(@PathVariable(value = "id") Integer filmId
+            , @PathVariable Integer userId) {
+        if (filmId != null && userId != null) {
+            return ResponseEntity.ok(filmService.removeLike(filmId, userId));
+        } else {
+            throw new NotFoundException("film id or user id missing");
+        }
+    }
+
+    @GetMapping({"/popular", "/popular?count={count}"})
+    ResponseEntity<List<Film>> getPopularFilms(@RequestParam(required = false) Integer count) {
+        return ResponseEntity.ok(filmService.getPopularFilms(count));
     }
 }
