@@ -24,6 +24,7 @@ public class User {
     @PastOrPresent
     private LocalDate birthday;
     private Set<Integer> friends = new TreeSet<>();
+    private boolean confirmed;
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
