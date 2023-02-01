@@ -1,6 +1,6 @@
 # java-filmorate
 Template repository for Filmorate project.
 <p>
-<img alt="db diagram" src="/images/db_diagram.jpg" width="400" height="400"/>
+<img alt="db diagram" src="/images/db_diagram.jpg" width="800" height="800"/>
 </p>
 
