@@ -17,4 +17,6 @@ public interface UserStorage {
     void remove(User user);
 
     int size();
+
+    int getMaxId();
 }

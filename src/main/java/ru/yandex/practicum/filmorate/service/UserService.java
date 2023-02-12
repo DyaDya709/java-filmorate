@@ -20,6 +20,7 @@ public class UserService implements Serviceable<User> {
     @Autowired
     public UserService(UserStorage storage) {
         this.storage = storage;
+        id = storage.getMaxId();
     }
 
     private void generateId(final User user) {

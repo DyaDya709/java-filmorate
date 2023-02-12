@@ -24,7 +24,7 @@ public class UserDbStorage implements UserStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private User makeUser(ResultSet rs) throws SQLException{
+    private User makeUser(ResultSet rs) throws SQLException {
         Integer id = rs.getInt("user_id");
         String email = rs.getString("email");
         String name = rs.getString("name");
@@ -35,7 +35,7 @@ public class UserDbStorage implements UserStorage {
         user.setFriends(user.getFriendship()
                 .entrySet()
                 .stream()
-                .map((kv)->kv.getKey())
+                .map((kv) -> kv.getKey())
                 .collect(Collectors.toSet()));
         return user;
     }
@@ -57,7 +57,9 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void put(Integer id, User user) {
-
+        jdbcTemplate.update("insert into USERS(user_id, email, login, name, birthday) " +
+                "VALUES (?,?,?,?,?)",
+                user.getId(), user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
     }
 
     @Override
@@ -74,7 +76,7 @@ public class UserDbStorage implements UserStorage {
                 user.setFriends(user.getFriendship()
                         .entrySet()
                         .stream()
-                        .map((kv)->kv.getKey())
+                        .map((kv) -> kv.getKey())
                         .collect(Collectors.toSet()));
                 return user;
             }
@@ -87,7 +89,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public List<User> get() {
         String sql = "select * from USERS";
-        return jdbcTemplate.query(sql,(rs, rowNum) ->makeUser(rs));
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs));
     }
 
     @Override
@@ -102,6 +104,15 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public int size() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxId() {
+        SqlRowSet rows = jdbcTemplate.queryForRowSet("select MAX(user_id) maxId from USERS");
+        if (rows.next()) {
+            return rows.getInt("maxId");
+        }
         return 0;
     }
 }
