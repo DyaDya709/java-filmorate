@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -24,7 +25,7 @@ public class User {
     @PastOrPresent
     private LocalDate birthday;
     private Set<Integer> friends = new TreeSet<>();
-    private boolean confirmed;
+    private HashMap<Integer,Boolean> friendship = new HashMap<>();
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
