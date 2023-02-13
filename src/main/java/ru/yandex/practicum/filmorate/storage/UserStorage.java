@@ -8,7 +8,13 @@ import java.util.List;
 public interface UserStorage {
     void put(Integer id, User user);
 
+    void put(User user);
+
+    void upDate(User user);
+
     User get(Integer id);
+
+    User get(String email);
 
     List<User> get();
 
@@ -19,4 +25,8 @@ public interface UserStorage {
     int size();
 
     int getMaxId();
+
+    void addFriend(User user, User friend);
+
+    boolean removeFriend(Integer userId, Integer friendId);
 }

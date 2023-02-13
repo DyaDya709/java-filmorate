@@ -20,7 +20,6 @@ public class UserService implements Serviceable<User> {
     @Autowired
     public UserService(UserStorage storage) {
         this.storage = storage;
-        id = storage.getMaxId();
     }
 
     private void generateId(final User user) {
@@ -29,11 +28,10 @@ public class UserService implements Serviceable<User> {
 
     @Override
     public void create(User user) {
-        generateId(user);
         if (user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        storage.put(user.getId(), user);
+        storage.put(user);
         log.info("user created '{}'", user);
     }
 
@@ -51,6 +49,13 @@ public class UserService implements Serviceable<User> {
         return user;
     }
 
+    public User get(String email) {
+        User user = storage.get(email);
+        if (user == null) {
+            throw new NotFoundException("user not found id=" + id);
+        }
+        return user;
+    }
     @Override
     public List<User> get() {
         log.info("users size '{}'", storage.size());
@@ -67,8 +72,7 @@ public class UserService implements Serviceable<User> {
         if (user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        remove(oldUser.getId());
-        add(user);
+        storage.upDate(user);
         log.info("user updated '{}'", user);
     }
 
@@ -80,16 +84,18 @@ public class UserService implements Serviceable<User> {
     public boolean addFriend(Integer userId, Integer friendId) throws NotFoundException {
         User user = get(userId);
         User friend = get(friendId);
-        user.getFriends().add(friendId);
-        friend.getFriends().add(user.getId());
+        //user.getFriends().add(friendId);
+        //friend.getFriends().add(user.getId());
+        storage.addFriend(user,friend);
         return true;
     }
 
     public boolean removeFriend(Integer userId, Integer friendId) throws NotFoundException {
         User user = get(userId);
         User friend = get(friendId);
-        user.getFriends().removeIf(id -> id.equals(friendId));
-        friend.getFriends().removeIf(id -> id.equals(userId));
+        //user.getFriends().removeIf(id -> id.equals(friendId));
+        //friend.getFriends().removeIf(id -> id.equals(userId));
+        storage.removeFriend(userId,friendId);
         return true;
     }
 

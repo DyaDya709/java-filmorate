@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -31,37 +30,64 @@ public class UserDbStorage implements UserStorage {
         String login = rs.getString("login");
         LocalDate birthday = rs.getDate("birthday").toLocalDate();
         User user = new User(id, email, login, name, birthday);
+        setFriendship(user);
+        return user;
+    }
+
+    private HashMap<Integer, Boolean> getFriends(Integer userId) {
+        HashMap<Integer, Boolean> friendship = new HashMap<>();
+        try {
+            SqlRowSet friendsRows = jdbcTemplate.queryForRowSet("select friend_id from FRIENDS where user_id=?"
+                    , userId);
+            while (friendsRows.next()) {
+                Integer friend_id = friendsRows.getInt("friend_id");
+                Boolean confirmed = friendsRows.getBoolean(1);
+                friendship.put(friend_id, confirmed);
+            }
+            return friendship;
+        } catch (DataAccessException e) {
+            return friendship;
+        }
+    }
+
+    private void setFriendship(User user) {
         user.setFriendship(getFriends(user.getId()));
         user.setFriends(user.getFriendship()
                 .entrySet()
                 .stream()
                 .map((kv) -> kv.getKey())
                 .collect(Collectors.toSet()));
-        return user;
-    }
-
-    private HashMap<Integer, Boolean> getFriends(Integer userId) {
-        try {
-            SqlRowSet friendsRows = jdbcTemplate.queryForRowSet("select friend_id from FRIENDS where user_id=?", userId);
-            HashMap<Integer, Boolean> friendship = new HashMap<>();
-            while (friendsRows.next()) {
-                Integer friend_id = friendsRows.getInt("friend_id");
-                Boolean confirmed = friendsRows.getBoolean("confirmed");
-                friendship.put(friend_id, confirmed);
-            }
-            return friendship;
-        } catch (DataAccessException e) {
-            return null;
-        }
     }
 
     @Override
     public void put(Integer id, User user) {
-        jdbcTemplate.update("insert into USERS(user_id, email, login, name, birthday) " +
-                "VALUES (?,?,?,?,?)",
-                user.getId(), user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
+
     }
 
+    @Override
+    public void put(User user) {
+        jdbcTemplate.update("insert into USERS(email, login, name, birthday) " +
+                "VALUES (?,?,?,?)",
+                 user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
+
+    }
+
+    @Override
+    public void upDate(User user) {
+        jdbcTemplate.update("update USERS SET email=?, login=?, name=?, birthday=?",
+                user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
+    }
+
+    @Override
+    public void addFriend(User user, User friend) {
+        jdbcTemplate.update("insert into FRIENDS(user_id,friend_id,confirmed) VALUES (?,?,?)"
+                , user.getId(),friend.getId(),false);
+    }
+
+    public boolean removeFriend(Integer userId, Integer friendId) {
+        jdbcTemplate.update("delete FROM FRIENDS where USER_ID = ? AND FRIEND_ID = ?",userId,friendId);
+        return true;
+    }
     @Override
     public User get(Integer id) {
         try {
@@ -72,12 +98,26 @@ public class UserDbStorage implements UserStorage {
                 String login = userRows.getString("login");
                 LocalDate birthday = userRows.getDate("birthday").toLocalDate();
                 User user = new User(id, email, login, name, birthday);
-                user.setFriendship(getFriends(id));
-                user.setFriends(user.getFriendship()
-                        .entrySet()
-                        .stream()
-                        .map((kv) -> kv.getKey())
-                        .collect(Collectors.toSet()));
+                setFriendship(user);
+                return user;
+            }
+        } catch (DataAccessException e) {
+            return null;
+        }
+        return null;
+    }
+
+    @Override
+    public User get(String email) {
+        try {
+            SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from USERS where EMAIL = ?", email);
+            if (userRows.next()) {
+                Integer id = userRows.getInt("user_id");
+                String name = userRows.getString("name");
+                String login = userRows.getString("login");
+                LocalDate birthday = userRows.getDate("birthday").toLocalDate();
+                User user = new User(id, email, login, name, birthday);
+                setFriendship(user);
                 return user;
             }
         } catch (DataAccessException e) {
@@ -94,12 +134,12 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void remove(Integer id) {
-
+        jdbcTemplate.update("delete from users where user_id=?",id);
     }
 
     @Override
     public void remove(User user) {
-
+        jdbcTemplate.update("delete from users where user_id=?",user.getId());
     }
 
     @Override

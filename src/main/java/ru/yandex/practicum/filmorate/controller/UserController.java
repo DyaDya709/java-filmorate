@@ -28,14 +28,14 @@ public class UserController extends AbstractController<User> {
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
         validator.validate(user);
         userService.create(user);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userService.get(user.getEmail()));
     }
 
     @PutMapping()
     public ResponseEntity<User> update(@Valid @RequestBody User user) {
         validator.validate(user);
         userService.upDate(user);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userService.get(user.getId()));
     }
 
     @GetMapping()

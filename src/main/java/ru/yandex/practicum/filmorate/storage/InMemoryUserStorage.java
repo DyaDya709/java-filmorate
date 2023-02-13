@@ -18,8 +18,23 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
+    public void put(User user) {
+
+    }
+
+    @Override
+    public void upDate(User user) {
+
+    }
+
+    @Override
     public User get(Integer id) {
         return data.get(id);
+    }
+
+    @Override
+    public User get(String email) {
+        return null;
     }
 
     @Override
@@ -45,5 +60,15 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public int getMaxId() {
         return Collections.max(data.keySet());
+    }
+
+    @Override
+    public void addFriend(User user, User friend) {
+
+    }
+
+    @Override
+    public boolean removeFriend(Integer userId, Integer friendId) {
+        return false;
     }
 }
