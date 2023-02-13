@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -14,12 +15,13 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class UserService implements UserServiceable {
+@Primary
+public class UserDbService implements UserServiceable {
     private final UserStorage storage;
     private int id = 0;
 
     @Autowired
-    public UserService(UserStorage storage) {
+    public UserDbService(UserStorage storage) {
         this.storage = storage;
     }
 

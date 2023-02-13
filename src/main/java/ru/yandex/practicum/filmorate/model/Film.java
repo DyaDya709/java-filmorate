@@ -36,4 +36,11 @@ public class Film {
         this.duration = duration;
         this.rate = rate;
     }
+    public Film(String name, String description, LocalDate releaseDate, long duration, Integer rate) {
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.rate = rate;
+    }
 }
