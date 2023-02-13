@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.dbService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 @Primary
+@Slf4j
 public class UserDbService implements UserServiceable {
     private final UserStorage storage;
     private int id = 0;
@@ -23,10 +23,6 @@ public class UserDbService implements UserServiceable {
     @Autowired
     public UserDbService(UserStorage storage) {
         this.storage = storage;
-    }
-
-    private void generateId(final User user) {
-        user.setId(++id);
     }
 
     @Override
@@ -90,9 +86,7 @@ public class UserDbService implements UserServiceable {
     public boolean addFriend(Integer userId, Integer friendId) throws NotFoundException {
         User user = get(userId);
         User friend = get(friendId);
-        //user.getFriends().add(friendId);
-        //friend.getFriends().add(user.getId());
-        storage.addFriend(user,friend);
+        storage.addFriend(user, friend);
         return true;
     }
 
@@ -100,7 +94,7 @@ public class UserDbService implements UserServiceable {
     public boolean removeFriend(Integer userId, Integer friendId) throws NotFoundException {
         User user = get(userId);
         User friend = get(friendId);
-        storage.removeFriend(userId,friendId);
+        storage.removeFriend(userId, friendId);
         return true;
     }
 

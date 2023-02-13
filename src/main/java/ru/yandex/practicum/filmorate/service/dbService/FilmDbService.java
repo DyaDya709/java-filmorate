@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.dbService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 @Primary
+@Slf4j
 public class FilmDbService implements FilmServiceable {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
@@ -87,6 +87,7 @@ public class FilmDbService implements FilmServiceable {
         return false;
     }
 
+    @Override
     public boolean removeLike(Integer filmId, Integer userId) {
         if (userStorage.get(userId) != null) {
             get(filmId).getLikesFromUserId().remove(userId);
@@ -97,6 +98,7 @@ public class FilmDbService implements FilmServiceable {
 
     }
 
+    @Override
     public List<Film> getPopularFilms(Integer count) {
         Comparator<Film> rateComparator = Comparator
                 .comparing(f -> filmLikes(f.getId()) + f.getRate(), Comparator.reverseOrder());

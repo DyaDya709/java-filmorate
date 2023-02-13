@@ -17,4 +17,10 @@ public interface FilmServiceable {
     void upDate(Film element) throws NotFoundException;
 
     void remove(Integer id);
+
+    boolean addLike(Integer filmId, Integer userId) throws NotFoundException;
+
+    boolean removeLike(Integer filmId, Integer userId);
+
+    List<Film> getPopularFilms(Integer count);
 }

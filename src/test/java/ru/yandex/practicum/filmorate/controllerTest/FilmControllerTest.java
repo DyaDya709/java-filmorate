@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.CustomValidator;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.service.memoryService.FilmService;
+import ru.yandex.practicum.filmorate.service.validateService.CustomValidator;
+import ru.yandex.practicum.filmorate.storage.memoryStorage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.memoryStorage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 
@@ -34,7 +34,7 @@ public class FilmControllerTest {
     @DisplayName("Создать фильм с пустым названием")
     void createFilmEmptyName() {
         Film film = new Film(1, "", "desc",
-                LocalDate.of(1982, 01, 01), 100,0);
+                LocalDate.of(1982, 01, 01), 100, 0);
         ValidationException ex = Assertions.assertThrows(ValidationException.class,
                 () -> validator.validate(film));
         Assertions.assertEquals("bad name", ex.getMessage());

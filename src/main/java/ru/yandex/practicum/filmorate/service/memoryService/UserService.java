@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.memoryService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +29,11 @@ public class UserService implements UserServiceable {
 
     @Override
     public void create(User user) {
+        generateId(user);
         if (user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        storage.put(user);
+        storage.put(user.getId(), user);
         log.info("user created '{}'", user);
     }
 
@@ -44,15 +45,6 @@ public class UserService implements UserServiceable {
     @Override
     public User get(Integer id) {
         User user = storage.get(id);
-        if (user == null) {
-            throw new NotFoundException("user not found id=" + id);
-        }
-        return user;
-    }
-
-    @Override
-    public User get(String email) {
-        User user = storage.get(email);
         if (user == null) {
             throw new NotFoundException("user not found id=" + id);
         }
@@ -75,7 +67,8 @@ public class UserService implements UserServiceable {
         if (user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        storage.upDate(user);
+        remove(oldUser.getId());
+        add(user);
         log.info("user updated '{}'", user);
     }
 
@@ -85,24 +78,26 @@ public class UserService implements UserServiceable {
     }
 
     @Override
+    public User get(String email) {
+        return null;
+    }
+
     public boolean addFriend(Integer userId, Integer friendId) throws NotFoundException {
         User user = get(userId);
         User friend = get(friendId);
-        //user.getFriends().add(friendId);
-        //friend.getFriends().add(user.getId());
-        storage.addFriend(user,friend);
+        user.getFriends().add(friendId);
+        friend.getFriends().add(user.getId());
         return true;
     }
 
-    @Override
     public boolean removeFriend(Integer userId, Integer friendId) throws NotFoundException {
         User user = get(userId);
         User friend = get(friendId);
-        storage.removeFriend(userId,friendId);
+        user.getFriends().removeIf(id -> id.equals(friendId));
+        friend.getFriends().removeIf(id -> id.equals(userId));
         return true;
     }
 
-    @Override
     public List<User> getFriends(Integer userId) throws NotFoundException {
         List<Integer> friendsId = get(userId).getFriends().stream().collect(Collectors.toList());
         List<User> friends = new ArrayList<>();
@@ -112,7 +107,6 @@ public class UserService implements UserServiceable {
         return friends;
     }
 
-    @Override
     public List<User> getCommonFriends(Integer userId, Integer otherId) throws NotFoundException {
         List<User> commonFriends = get(otherId)
                 .getFriends()

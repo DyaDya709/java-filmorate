@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.CustomValidator;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.service.memoryService.UserService;
+import ru.yandex.practicum.filmorate.service.validateService.CustomValidator;
+import ru.yandex.practicum.filmorate.storage.memoryStorage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.storageInterface.UserStorage;
 
 import java.time.LocalDate;
@@ -19,6 +19,7 @@ public class UserControllerTest {
     CustomValidator validator;
     UserService userService;
     UserStorage storage;
+
     @BeforeEach
     void init() {
         validator = new CustomValidator<User>();

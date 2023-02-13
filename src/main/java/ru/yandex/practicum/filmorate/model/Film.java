@@ -2,8 +2,8 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.enumCustom.Genre;
-import ru.yandex.practicum.filmorate.enumCustom.Rating;
+import ru.yandex.practicum.filmorate.model.enumCustom.Genre;
+import ru.yandex.practicum.filmorate.model.enumCustom.Rating;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;

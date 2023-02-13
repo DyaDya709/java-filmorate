@@ -1,44 +1,50 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.dbStorage;
 
+import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.storageInterface.FilmStorage;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
-public class InMemoryFilmStorage implements FilmStorage {
-    private final HashMap<Integer, Film> data = new HashMap<>();
+@Primary
+public class FilmDbStorage implements FilmStorage {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
     public void put(Integer id, Film film) {
-        data.put(id, film);
+
     }
 
     @Override
     public Film get(Integer id) {
-        return data.get(id);
+        return null;
     }
 
     @Override
     public List<Film> get() {
-        return data.values().stream().collect(Collectors.toList());
+        return null;
     }
 
     @Override
     public void remove(Integer id) {
-        data.remove(id);
+
     }
 
     @Override
     public void remove(Film film) {
-        data.remove(film.getId());
+
     }
 
     @Override
     public int size() {
-        return data.size();
+        return 0;
     }
 }

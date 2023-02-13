@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.memoryService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +85,7 @@ public class FilmService implements FilmServiceable {
         return false;
     }
 
+    @Override
     public boolean removeLike(Integer filmId, Integer userId) {
         if (userStorage.get(userId) != null) {
             get(filmId).getLikesFromUserId().remove(userId);
@@ -95,6 +96,7 @@ public class FilmService implements FilmServiceable {
 
     }
 
+    @Override
     public List<Film> getPopularFilms(Integer count) {
         Comparator<Film> rateComparator = Comparator
                 .comparing(f -> filmLikes(f.getId()) + f.getRate(), Comparator.reverseOrder());

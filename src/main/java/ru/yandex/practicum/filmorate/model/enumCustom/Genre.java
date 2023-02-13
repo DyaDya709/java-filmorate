@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.enumCustom;
+package ru.yandex.practicum.filmorate.model.enumCustom;
 
 public enum Genre {
     COMEDY,

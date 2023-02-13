@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.dbStorage;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataAccessException;
