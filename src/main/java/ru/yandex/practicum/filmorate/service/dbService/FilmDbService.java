@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 public class FilmDbService implements FilmServiceable {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
-    private int id = 0;
     private final int DEFAULT_COUNT = 10;
 
     @Autowired
@@ -29,14 +28,9 @@ public class FilmDbService implements FilmServiceable {
         this.userStorage = userStorage;
     }
 
-    private void generateId(final Film film) {
-        film.setId(++id);
-    }
-
     @Override
     public void create(Film film) {
-        generateId(film);
-        filmStorage.put(film.getId(), film);
+        filmStorage.put(film);
         log.info("film created '{}'", film);
     }
 
@@ -67,8 +61,7 @@ public class FilmDbService implements FilmServiceable {
             String text = String.format("film id %d not found", film.getId());
             throw new NotFoundException(text);
         }
-        remove(oldFilm.getId());
-        add(film);
+        filmStorage.update(film);
         log.info("film updated '{}'", film);
     }
 

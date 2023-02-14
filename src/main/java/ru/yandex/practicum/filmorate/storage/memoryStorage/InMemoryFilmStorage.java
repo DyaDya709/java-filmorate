@@ -18,6 +18,16 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public void put(Film film) {
+
+    }
+
+    @Override
+    public Film update(Film film) {
+        return null;
+    }
+
+    @Override
     public Film get(Integer id) {
         return data.get(id);
     }

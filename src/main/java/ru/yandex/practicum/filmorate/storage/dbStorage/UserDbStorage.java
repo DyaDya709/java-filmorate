@@ -25,12 +25,12 @@ public class UserDbStorage implements UserStorage {
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
-        Integer id = rs.getInt("user_id");
-        String email = rs.getString("email");
-        String name = rs.getString("name");
-        String login = rs.getString("login");
-        LocalDate birthday = rs.getDate("birthday").toLocalDate();
-        User user = new User(id, email, login, name, birthday);
+        User user = new User();
+        user.setId(rs.getInt("user_id"));
+        user.setEmail(rs.getString("email"));
+        user.setName(rs.getString("name"));
+        user.setLogin(rs.getString("login"));
+        user.setBirthday(rs.getDate("birthday").toLocalDate());
         setFriendship(user);
         return user;
     }

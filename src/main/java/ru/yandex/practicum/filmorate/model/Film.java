@@ -2,8 +2,6 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.model.enumCustom.Genre;
-import ru.yandex.practicum.filmorate.model.enumCustom.Rating;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
@@ -27,7 +25,7 @@ public class Film {
     private Integer rate;
     private HashMap<Integer, Integer> likesFromUserId = new HashMap<>();
     private Set<Genre> genres = new HashSet<>();
-    private Rating rating;
+    private Rating mpa;
     public Film(int id, String name, String description, LocalDate releaseDate, long duration, Integer rate) {
         this.id = id;
         this.name = name;
@@ -42,5 +40,13 @@ public class Film {
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.rate = rate;
+    }
+
+    public Film(String name, String description, LocalDate releaseDate, long duration, Rating mpa) {
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.mpa = mpa;
     }
 }
