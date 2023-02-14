@@ -34,11 +34,6 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User get(String email) {
-        return null;
-    }
-
-    @Override
     public List<User> get() {
         return data.values().stream().collect(Collectors.toList());
     }

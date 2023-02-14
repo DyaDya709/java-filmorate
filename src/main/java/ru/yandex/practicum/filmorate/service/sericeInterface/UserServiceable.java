@@ -18,8 +18,6 @@ public interface UserServiceable {
 
     void remove(Integer id);
 
-    User get(String email);
-
     boolean addFriend(Integer userId, Integer friendId) throws NotFoundException;
 
     boolean removeFriend(Integer userId, Integer friendId) throws NotFoundException;

@@ -14,8 +14,6 @@ public interface UserStorage {
 
     User get(Integer id);
 
-    User get(String email);
-
     List<User> get();
 
     void remove(Integer id);

@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.dbStorage;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
@@ -10,9 +11,9 @@ import ru.yandex.practicum.filmorate.storage.storageInterface.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -60,6 +61,14 @@ public class UserDbStorage implements UserStorage {
                 .collect(Collectors.toSet()));
     }
 
+    private Map<String, Object> userToMap(User user) {
+        Map<String, Object> values = new HashMap<>();
+        values.put("EMAIL", user.getEmail());
+        values.put("LOGIN", user.getLogin());
+        values.put("NAME", user.getName());
+        values.put("BIRTHDAY", user.getBirthday());
+        return values;
+    }
     @Override
     public void put(Integer id, User user) {
 
@@ -67,10 +76,12 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void put(User user) {
-        jdbcTemplate.update("insert into USERS(email, login, name, birthday) " +
-                "VALUES (?,?,?,?)",
-                 user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
-
+        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("USERS")
+                .usingGeneratedKeyColumns("user_id");
+        int user_id = simpleJdbcInsert.executeAndReturnKey(userToMap(user)).intValue();
+        //Засетим id, так как этот объект будет возвращен клиенту, не будем собирать его из базы заново.
+        user.setId(user_id);
     }
 
     @Override
@@ -85,46 +96,16 @@ public class UserDbStorage implements UserStorage {
                 , user.getId(),friend.getId(),false);
     }
 
+    @Override
     public boolean removeFriend(Integer userId, Integer friendId) {
         jdbcTemplate.update("delete FROM FRIENDS where USER_ID = ? AND FRIEND_ID = ?",userId,friendId);
         return true;
     }
-    @Override
-    public User get(Integer id) {
-        try {
-            SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from USERS where USER_ID = ?", id);
-            if (userRows.next()) {
-                String email = userRows.getString("email");
-                String name = userRows.getString("name");
-                String login = userRows.getString("login");
-                LocalDate birthday = userRows.getDate("birthday").toLocalDate();
-                User user = new User(id, email, login, name, birthday);
-                setFriendship(user);
-                return user;
-            }
-        } catch (DataAccessException e) {
-            return null;
-        }
-        return null;
-    }
 
     @Override
-    public User get(String email) {
-        try {
-            SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from USERS where EMAIL = ?", email);
-            if (userRows.next()) {
-                Integer id = userRows.getInt("user_id");
-                String name = userRows.getString("name");
-                String login = userRows.getString("login");
-                LocalDate birthday = userRows.getDate("birthday").toLocalDate();
-                User user = new User(id, email, login, name, birthday);
-                setFriendship(user);
-                return user;
-            }
-        } catch (DataAccessException e) {
-            return null;
-        }
-        return null;
+    public User get(Integer id) {
+        String sql = "select * from USERS where USER_ID = ?";
+        return jdbcTemplate.query(sql,(rs,rowNum)->makeUser(rs),id).stream().findFirst().orElse(null);
     }
 
     @Override

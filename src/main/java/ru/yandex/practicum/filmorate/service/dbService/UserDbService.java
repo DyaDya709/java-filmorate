@@ -49,15 +49,6 @@ public class UserDbService implements UserServiceable {
     }
 
     @Override
-    public User get(String email) {
-        User user = storage.get(email);
-        if (user == null) {
-            throw new NotFoundException("user not found id=" + id);
-        }
-        return user;
-    }
-
-    @Override
     public List<User> get() {
         log.info("users size '{}'", storage.size());
         return storage.get();

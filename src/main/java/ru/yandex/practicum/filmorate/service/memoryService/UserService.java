@@ -77,11 +77,6 @@ public class UserService implements UserServiceable {
         storage.remove(id);
     }
 
-    @Override
-    public User get(String email) {
-        return null;
-    }
-
     public boolean addFriend(Integer userId, Integer friendId) throws NotFoundException {
         User user = get(userId);
         User friend = get(friendId);
