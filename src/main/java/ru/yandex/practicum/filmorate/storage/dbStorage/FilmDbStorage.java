@@ -81,7 +81,7 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sqlDel, film.getId());
         String sqlInsertGenre = "INSERT INTO FILMS_GENRES(FILM_ID,GENRE_ID) VALUES(?,?)";
         film.getGenres().stream()
-                .collect(Collectors.toSet())
+                .distinct()
                 .forEach((genre -> jdbcTemplate.update(sqlInsertGenre, film.getId(), genre.getId())));
         film.setGenres(getFilmGenres(film.getId()));
     }
