@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate.service.sericeInterface;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Rating;
 
 import java.util.List;
 
@@ -23,4 +25,12 @@ public interface FilmServiceable {
     boolean removeLike(Integer filmId, Integer userId);
 
     List<Film> getPopularFilms(Integer count);
+
+    Rating getRating(Integer id) throws NotFoundException;
+
+    List<Rating> getRating();
+
+    Genre getGenre(Integer id);
+
+    List<Genre> getGenre();
 }

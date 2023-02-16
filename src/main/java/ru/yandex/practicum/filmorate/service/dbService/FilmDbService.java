@@ -6,26 +6,26 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.service.sericeInterface.FilmServiceable;
+import ru.yandex.practicum.filmorate.service.sericeInterface.UserServiceable;
 import ru.yandex.practicum.filmorate.storage.storageInterface.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.storageInterface.UserStorage;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Primary
 @Slf4j
 public class FilmDbService implements FilmServiceable {
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+    private final UserServiceable userServiceable;
     private final int DEFAULT_COUNT = 10;
 
     @Autowired
-    public FilmDbService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmDbService(FilmStorage filmStorage, UserServiceable userServiceable) {
         this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
+        this.userServiceable = userServiceable;
     }
 
     @Override
@@ -71,40 +71,59 @@ public class FilmDbService implements FilmServiceable {
     }
 
     public boolean addLike(Integer filmId, Integer userId) throws NotFoundException {
-        if (userStorage.get(userId) != null) {
-            Integer likes = get(filmId).getLikesFromUserId().getOrDefault(userId, 0);
-            get(filmId).getLikesFromUserId().put(userId
-                    , likes + 1);
+        //проверим есть ли пользователь в базе
+        userServiceable.get(userId);
+        if (filmStorage.get(filmId) != null) {
+            filmStorage.addLike(filmId, userId);
             return true;
+        } else {
+            throw new NotFoundException("film not found id=" + filmId);
         }
-        return false;
     }
 
     @Override
     public boolean removeLike(Integer filmId, Integer userId) {
-        if (userStorage.get(userId) != null) {
-            get(filmId).getLikesFromUserId().remove(userId);
+        //проверим есть ли пользователь в базе
+        userServiceable.get(userId);
+        if (filmStorage.get(filmId) != null) {
+            filmStorage.removeLike(filmId, userId);
             return true;
         } else {
-            throw new NotFoundException("user not found id=" + userId);
+            throw new NotFoundException("film not found id=" + filmId);
         }
-
     }
 
     @Override
     public List<Film> getPopularFilms(Integer count) {
-        Comparator<Film> rateComparator = Comparator
-                .comparing(f -> filmLikes(f.getId()) + f.getRate(), Comparator.reverseOrder());
-        Comparator<Film> dateComparator = Comparator
-                .comparing((f) -> f.getReleaseDate(), Comparator.nullsLast(Comparator.reverseOrder()));
+        return filmStorage.getPopularFilms(count == null ? DEFAULT_COUNT : count);
+    }
 
-        List<Film> films = filmStorage.get()
-                .stream()
-                .filter(f -> f.getLikesFromUserId().size() > 0 || f.getRate() > 0)
-                .sorted(dateComparator.thenComparing(rateComparator))
-                .limit(count == null ? DEFAULT_COUNT : count)
-                .collect(Collectors.toList());
-        return films;
+    @Override
+    public Rating getRating(Integer id) throws NotFoundException {
+        Rating rating = filmStorage.getRating(id);
+        if (rating == null) {
+            throw new NotFoundException("mpa not found id=" + id);
+        }
+        return rating;
+    }
+
+    @Override
+    public List<Rating> getRating() {
+        return filmStorage.getRating();
+    }
+
+    @Override
+    public Genre getGenre(Integer id) {
+        Genre genre = filmStorage.getGenre(id);
+        if (genre == null) {
+            throw new NotFoundException("genre not found id=" + id);
+        }
+        return genre;
+    }
+
+    @Override
+    public List<Genre> getGenre() {
+        return filmStorage.getGenre();
     }
 
     private Integer filmLikes(Integer filmId) {

@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.service.sericeInterface.FilmServiceable;
 import ru.yandex.practicum.filmorate.storage.storageInterface.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.storageInterface.UserStorage;
@@ -110,6 +112,26 @@ public class FilmService implements FilmServiceable {
                 .limit(count == null ? DEFAULT_COUNT : count)
                 .collect(Collectors.toList());
         return films;
+    }
+
+    @Override
+    public Rating getRating(Integer id) throws NotFoundException {
+        return null;
+    }
+
+    @Override
+    public List<Rating> getRating() {
+        return null;
+    }
+
+    @Override
+    public Genre getGenre(Integer id) {
+        return null;
+    }
+
+    @Override
+    public List<Genre> getGenre() {
+        return null;
     }
 
     private Integer filmLikes(Integer filmId) {
