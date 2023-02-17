@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.sericeInterface.UserServiceable;
+import ru.yandex.practicum.filmorate.service.serviceInterface.UserServiceable;
 import ru.yandex.practicum.filmorate.storage.storageInterface.UserStorage;
 
 import java.util.ArrayList;

@@ -2,23 +2,15 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Rating;
-import ru.yandex.practicum.filmorate.service.dbService.FilmDbService;
-import ru.yandex.practicum.filmorate.service.sericeInterface.UserServiceable;
 import ru.yandex.practicum.filmorate.service.validateService.CustomValidator;
-import ru.yandex.practicum.filmorate.service.memoryService.FilmService;
-import ru.yandex.practicum.filmorate.service.sericeInterface.FilmServiceable;
+import ru.yandex.practicum.filmorate.service.serviceInterface.FilmServiceable;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/films")

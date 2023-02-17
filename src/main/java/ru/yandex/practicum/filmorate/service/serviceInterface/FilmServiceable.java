@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service.sericeInterface;
+package ru.yandex.practicum.filmorate.service.serviceInterface;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;

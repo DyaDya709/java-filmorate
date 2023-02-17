@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.service.sericeInterface.FilmServiceable;
+import ru.yandex.practicum.filmorate.service.serviceInterface.FilmServiceable;
 
 import java.util.List;
 import java.util.Optional;

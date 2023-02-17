@@ -7,7 +7,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
-import ru.yandex.practicum.filmorate.service.sericeInterface.FilmServiceable;
+import ru.yandex.practicum.filmorate.service.serviceInterface.FilmServiceable;
 import ru.yandex.practicum.filmorate.storage.storageInterface.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.storageInterface.UserStorage;
 

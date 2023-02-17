@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.dbService.UserDbService;
-import ru.yandex.practicum.filmorate.service.sericeInterface.UserServiceable;
+import ru.yandex.practicum.filmorate.service.serviceInterface.UserServiceable;
 import ru.yandex.practicum.filmorate.service.validateService.CustomValidator;
 
 import javax.validation.Valid;
