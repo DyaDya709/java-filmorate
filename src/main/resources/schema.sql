@@ -1,12 +1,5 @@
-drop table FILMS_GENRES;
-drop table FRIENDS;
-drop table GENRES;
-drop table LIKES;
-drop table FILMS;
-drop table RATINGS;
-drop table USERS;
 
-create table GENRES
+create table if not exists GENRES
 (
     GENRE_ID INTEGER auto_increment
         primary key,
@@ -14,7 +7,7 @@ create table GENRES
         unique
 );
 
-create table RATINGS
+create table if not exists RATINGS
 (
     RATING_ID INTEGER auto_increment
         primary key,
@@ -22,7 +15,7 @@ create table RATINGS
         unique
 );
 
-create table FILMS
+create table if not exists FILMS
 (
     FILM_ID       INTEGER auto_increment
         primary key,
@@ -36,7 +29,7 @@ create table FILMS
             on update cascade on delete cascade
 );
 
-create table FILMS_GENRES
+create table if not exists FILMS_GENRES
 (
     FILM_ID  INTEGER not null,
     GENRE_ID INTEGER not null,
@@ -50,7 +43,7 @@ create table FILMS_GENRES
             on update cascade on delete cascade
 );
 
-create table USERS
+create table if not exists USERS
 (
     USER_ID  INTEGER auto_increment
         primary key,
@@ -60,7 +53,7 @@ create table USERS
     BIRTHDAY DATE
 );
 
-create table FRIENDS
+create table if not exists FRIENDS
 (
     USER_ID   INTEGER               not null,
     FRIEND_ID INTEGER               not null,
@@ -75,7 +68,7 @@ create table FRIENDS
             on update cascade on delete cascade
 );
 
-create table LIKES
+create table if not exists LIKES
 (
     USER_ID INTEGER not null,
     FILM_ID INTEGER not null,
@@ -89,15 +82,14 @@ create table LIKES
             on update cascade on delete cascade
 );
 
-INSERT INTO GENRES(NAME) VALUES ('Комедия');
-INSERT INTO GENRES(NAME) VALUES ('Драма');
-INSERT INTO GENRES(NAME) VALUES ('Мультфильм');
-INSERT INTO GENRES(NAME) VALUES ('Триллер');
-INSERT INTO GENRES(NAME) VALUES ('Документальный');
-INSERT INTO GENRES(NAME) VALUES ('Боевик');
-
-INSERT INTO RATINGS(NAME) VALUES ('G');
-INSERT INTO RATINGS(NAME) VALUES ('PG');
-INSERT INTO RATINGS(NAME) VALUES ('PG-13');
-INSERT INTO RATINGS(NAME) VALUES ('R');
-INSERT INTO RATINGS(NAME) VALUES ('NC-17');
+DELETE FROM FILMS_GENRES ;
+DELETE FROM FRIENDS ;
+DELETE FROM LIKES ;
+DELETE FROM FILMS ;
+ALTER TABLE FILMS ALTER COLUMN film_id RESTART WITH 1;
+DELETE FROM RATINGS ;
+ALTER TABLE RATINGS ALTER COLUMN rating_id RESTART WITH 1;
+DELETE FROM GENRES ;
+ALTER TABLE GENRES ALTER COLUMN genre_id RESTART WITH 1;
+DELETE FROM USERS ;
+ALTER TABLE USERS ALTER COLUMN USER_ID RESTART WITH 1;
