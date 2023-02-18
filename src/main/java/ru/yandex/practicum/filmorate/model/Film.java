@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class Film {
     private Integer rate;
     private HashMap<Integer, Integer> likesFromUserId = new HashMap<>();
     private List<Genre> genres = new ArrayList<>();
+    @NotNull
     private Rating mpa;
     public Film(int id, String name, String description, LocalDate releaseDate, long duration, Integer rate) {
         this.id = id;

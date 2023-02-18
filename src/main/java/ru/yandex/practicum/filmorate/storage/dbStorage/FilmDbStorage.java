@@ -1,9 +1,13 @@
 package ru.yandex.practicum.filmorate.storage.dbStorage;
 
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Indexed;
+import ru.yandex.practicum.filmorate.exception.NotimplementedMethodException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
@@ -36,6 +40,8 @@ public class FilmDbStorage implements FilmStorage {
         mpa.setName(rs.getString("mpaname"));
         film.setMpa(mpa);
         film.setGenres(getFilmGenres(film.getId()));
+        film.setLikesFromUserId(getFilmLikes(film.getId()));
+        //используется для определения популярного фильма
         if (rs.getMetaData().getColumnCount() == 8 && rs.getMetaData().getColumnName(8).equals("LIKES")) {
             film.setRate(rs.getInt("likes"));
         }
@@ -86,9 +92,21 @@ public class FilmDbStorage implements FilmStorage {
         film.setGenres(getFilmGenres(film.getId()));
     }
 
+    private HashMap<Integer, Integer> getFilmLikes(Integer filmId) {
+        HashMap<Integer, Integer> likes = new HashMap<>();
+        String sql = "SELECT USER_ID," +
+                "COUNT(FILM_ID) AS count " +
+                "FROM LIKES where FILM_ID=?" +
+                "group by USER_ID";
+        SqlRowSet likesSet = jdbcTemplate.queryForRowSet(sql,filmId);
+        while (likesSet.next()) {
+            likes.put(likesSet.getInt("user_id"),likesSet.getInt("count"));
+        }
+        return likes;
+    }
     @Override
     public void put(Integer id, Film film) {
-        //заглушка для совместимости с инрефейсом
+        throw new NotimplementedMethodException("method not implemented");
     }
 
     @Override
