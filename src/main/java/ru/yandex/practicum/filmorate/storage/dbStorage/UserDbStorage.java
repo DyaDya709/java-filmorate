@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.dbStorage;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,17 +23,21 @@ import java.util.stream.Collectors;
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
-        User user = new User();
-        user.setId(rs.getInt("user_id"));
-        user.setEmail(rs.getString("email"));
-        user.setName(rs.getString("name"));
-        user.setLogin(rs.getString("login"));
-        user.setBirthday(rs.getDate("birthday").toLocalDate());
+        User user = User.builder()
+                .id(rs.getInt("user_id"))
+                .email(rs.getString("email"))
+                .name(rs.getString("name"))
+                .login(rs.getString("login"))
+                .birthday(rs.getDate("birthday").toLocalDate())
+                .friends(new TreeSet<>())
+                .friendship(new HashMap<>())
+                .build();
         setFriendship(user);
         return user;
     }
@@ -69,10 +75,6 @@ public class UserDbStorage implements UserStorage {
         values.put("BIRTHDAY", user.getBirthday());
         return values;
     }
-    @Override
-    public void put(Integer id, User user) {
-
-    }
 
     @Override
     public void put(User user) {
@@ -93,19 +95,19 @@ public class UserDbStorage implements UserStorage {
     @Override
     public void addFriend(User user, User friend) {
         jdbcTemplate.update("insert into FRIENDS(user_id,friend_id,confirmed) VALUES (?,?,?)"
-                , user.getId(),friend.getId(),false);
+                , user.getId(), friend.getId(), false);
     }
 
     @Override
     public boolean removeFriend(Integer userId, Integer friendId) {
-        jdbcTemplate.update("delete FROM FRIENDS where USER_ID = ? AND FRIEND_ID = ?",userId,friendId);
+        jdbcTemplate.update("delete FROM FRIENDS where USER_ID = ? AND FRIEND_ID = ?", userId, friendId);
         return true;
     }
 
     @Override
     public User get(Integer id) {
         String sql = "select * from USERS where USER_ID = ?";
-        return jdbcTemplate.query(sql,(rs,rowNum)->makeUser(rs),id).stream().findFirst().orElse(null);
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), id).stream().findFirst().orElse(null);
     }
 
     @Override
@@ -116,17 +118,12 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void remove(Integer id) {
-        jdbcTemplate.update("delete from users where user_id=?",id);
+        jdbcTemplate.update("delete from users where user_id=?", id);
     }
 
     @Override
     public void remove(User user) {
-        jdbcTemplate.update("delete from users where user_id=?",user.getId());
-    }
-
-    @Override
-    public int size() {
-        return 0;
+        jdbcTemplate.update("delete from users where user_id=?", user.getId());
     }
 
     @Override

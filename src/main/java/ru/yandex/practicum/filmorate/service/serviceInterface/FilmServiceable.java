@@ -10,8 +10,6 @@ import java.util.List;
 public interface FilmServiceable {
     void create(Film element);
 
-    void add(Film element);
-
     Film get(Integer id) throws NotFoundException;
 
     List<Film> get();

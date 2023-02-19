@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,10 +9,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Data
-@NoArgsConstructor
+@Builder
 public class Film {
     private int id;
     @NotBlank(message = "название не может быть пустым")
@@ -26,27 +29,4 @@ public class Film {
     private List<Genre> genres = new ArrayList<>();
     @NotNull
     private Rating mpa;
-    public Film(int id, String name, String description, LocalDate releaseDate, long duration, Integer rate) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.rate = rate;
-    }
-    public Film(String name, String description, LocalDate releaseDate, long duration, Integer rate) {
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.rate = rate;
-    }
-
-    public Film(String name, String description, LocalDate releaseDate, long duration, Rating mpa) {
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.mpa = mpa;
-    }
 }

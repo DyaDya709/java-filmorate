@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.model.Rating;
 import java.util.List;
 
 public interface FilmStorage {
-    void put(Integer id, Film film);
 
     void put(Film film);
 
@@ -35,5 +34,4 @@ public interface FilmStorage {
 
     List<Genre> getGenre();
 
-    int size();
 }

@@ -6,8 +6,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface UserStorage {
-    void put(Integer id, User user);
-
     void put(User user);
 
     void upDate(User user);
@@ -19,8 +17,6 @@ public interface UserStorage {
     void remove(Integer id);
 
     void remove(User user);
-
-    int size();
 
     int getMaxId();
 

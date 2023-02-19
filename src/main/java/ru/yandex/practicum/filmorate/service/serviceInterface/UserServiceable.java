@@ -8,8 +8,6 @@ import java.util.List;
 public interface UserServiceable {
     void create(User element);
 
-    void add(User element);
-
     User get(Integer id) throws NotFoundException;
 
     List<User> get();

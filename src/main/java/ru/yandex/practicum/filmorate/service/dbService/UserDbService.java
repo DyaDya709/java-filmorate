@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.NotimplementedMethodException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.serviceInterface.UserServiceable;
 import ru.yandex.practicum.filmorate.storage.storageInterface.UserStorage;
@@ -36,11 +35,6 @@ public class UserDbService implements UserServiceable {
     }
 
     @Override
-    public void add(User user) {
-        throw new NotimplementedMethodException("method not implemented");
-    }
-
-    @Override
     public User get(Integer id) {
         User user = storage.get(id);
         if (user == null) {
@@ -51,7 +45,7 @@ public class UserDbService implements UserServiceable {
 
     @Override
     public List<User> get() {
-        log.info("users size '{}'", storage.size());
+        log.info("users size '{}'", "get all films");
         return storage.get();
     }
 

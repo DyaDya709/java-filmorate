@@ -1,13 +1,11 @@
 package ru.yandex.practicum.filmorate.storage.dbStorage;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Indexed;
-import ru.yandex.practicum.filmorate.exception.NotimplementedMethodException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
@@ -15,7 +13,10 @@ import ru.yandex.practicum.filmorate.storage.storageInterface.FilmStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -24,21 +25,25 @@ public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     private Film makeFilm(ResultSet rs) throws SQLException {
-        Film film = new Film();
-        film.setId(rs.getInt("film_id"));
-        film.setName(rs.getString("name"));
-        film.setDescription(rs.getString("description"));
-        film.setReleaseDate(rs.getDate("RELEASE_DATE").toLocalDate());
-        film.setDuration(rs.getLong("duration"));
         Rating mpa = new Rating();
         mpa.setId(rs.getInt("rating_id"));
         mpa.setName(rs.getString("mpaname"));
-        film.setMpa(mpa);
+
+        Film film = Film.builder()
+                .id(rs.getInt("film_id"))
+                .name(rs.getString("name"))
+                .description(rs.getString("description"))
+                .releaseDate(rs.getDate("RELEASE_DATE").toLocalDate())
+                .duration(rs.getLong("duration"))
+                .genres(new ArrayList<>())
+                .likesFromUserId(new HashMap<>())
+                .mpa(mpa).build();
         film.setGenres(getFilmGenres(film.getId()));
         film.setLikesFromUserId(getFilmLikes(film.getId()));
         //используется для определения популярного фильма
@@ -86,6 +91,9 @@ public class FilmDbStorage implements FilmStorage {
         String sqlDel = "DELETE FROM FILMS_GENRES WHERE FILM_ID=?";
         jdbcTemplate.update(sqlDel, film.getId());
         String sqlInsertGenre = "INSERT INTO FILMS_GENRES(FILM_ID,GENRE_ID) VALUES(?,?)";
+        if (film.getGenres() == null) {
+            film.setGenres(new ArrayList<>());
+        }
         film.getGenres().stream()
                 .distinct()
                 .forEach((genre -> jdbcTemplate.update(sqlInsertGenre, film.getId(), genre.getId())));
@@ -103,10 +111,6 @@ public class FilmDbStorage implements FilmStorage {
             likes.put(likesSet.getInt("user_id"),likesSet.getInt("count"));
         }
         return likes;
-    }
-    @Override
-    public void put(Integer id, Film film) {
-        throw new NotimplementedMethodException("method not implemented");
     }
 
     @Override
@@ -226,8 +230,4 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sql, ((rs, rowNum) -> makeGenre(rs)));
     }
 
-    @Override
-    public int size() {
-        return 0;
-    }
 }

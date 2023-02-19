@@ -35,11 +35,6 @@ public class FilmDbService implements FilmServiceable {
     }
 
     @Override
-    public void add(Film film) {
-        filmStorage.put(film.getId(), film);
-    }
-
-    @Override
     public Film get(Integer id) {
         Film film = filmStorage.get(id);
         if (film == null) {
@@ -50,7 +45,7 @@ public class FilmDbService implements FilmServiceable {
 
     @Override
     public List<Film> get() {
-        log.info("films size '{}'", filmStorage.size());
+        log.info("films size '{}'", "get all films");
         return filmStorage.get();
     }
 
@@ -124,11 +119,5 @@ public class FilmDbService implements FilmServiceable {
     @Override
     public List<Genre> getGenre() {
         return filmStorage.getGenre();
-    }
-
-    private Integer filmLikes(Integer filmId) {
-        return filmStorage.get(filmId).getLikesFromUserId().values()
-                .stream()
-                .mapToInt(l -> l).sum();
     }
 }
