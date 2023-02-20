@@ -1,44 +1,37 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.dbService;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.service.serviceInterface.UserServiceable;
+import ru.yandex.practicum.filmorate.storage.storageInterface.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Primary
 @Slf4j
-public class UserService implements Serviceable<User> {
+public class UserDbService implements UserServiceable {
     private final UserStorage storage;
     private int id = 0;
 
     @Autowired
-    public UserService(UserStorage storage) {
+    public UserDbService(UserStorage storage) {
         this.storage = storage;
-    }
-
-    private void generateId(final User user) {
-        user.setId(++id);
     }
 
     @Override
     public void create(User user) {
-        generateId(user);
         if (user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        storage.put(user.getId(), user);
+        storage.put(user);
         log.info("user created '{}'", user);
-    }
-
-    @Override
-    public void add(User user) {
-        storage.put(user.getId(), user);
     }
 
     @Override
@@ -52,7 +45,7 @@ public class UserService implements Serviceable<User> {
 
     @Override
     public List<User> get() {
-        log.info("users size '{}'", storage.size());
+        log.info("users size '{}'", "get all films");
         return storage.get();
     }
 
@@ -66,8 +59,7 @@ public class UserService implements Serviceable<User> {
         if (user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        remove(oldUser.getId());
-        add(user);
+        storage.upDate(user);
         log.info("user updated '{}'", user);
     }
 
@@ -76,22 +68,23 @@ public class UserService implements Serviceable<User> {
         storage.remove(id);
     }
 
+    @Override
     public boolean addFriend(Integer userId, Integer friendId) throws NotFoundException {
         User user = get(userId);
         User friend = get(friendId);
-        user.getFriends().add(friendId);
-        friend.getFriends().add(user.getId());
+        storage.addFriend(user, friend);
         return true;
     }
 
+    @Override
     public boolean removeFriend(Integer userId, Integer friendId) throws NotFoundException {
         User user = get(userId);
         User friend = get(friendId);
-        user.getFriends().removeIf(id -> id.equals(friendId));
-        friend.getFriends().removeIf(id -> id.equals(userId));
+        storage.removeFriend(userId, friendId);
         return true;
     }
 
+    @Override
     public List<User> getFriends(Integer userId) throws NotFoundException {
         List<Integer> friendsId = get(userId).getFriends().stream().collect(Collectors.toList());
         List<User> friends = new ArrayList<>();
@@ -101,6 +94,7 @@ public class UserService implements Serviceable<User> {
         return friends;
     }
 
+    @Override
     public List<User> getCommonFriends(Integer userId, Integer otherId) throws NotFoundException {
         List<User> commonFriends = get(otherId)
                 .getFriends()
